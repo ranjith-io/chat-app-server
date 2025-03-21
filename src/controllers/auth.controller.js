@@ -77,15 +77,7 @@ export const logout = (req, res) => {
     }
 }
 
-export const userdata = async(req,res) =>{
-    try {
-    const userss = await User.find({});
-    res.json(userss);
-    }
-    catch (error){
-        console.log(error.message);
-    }
-}
+
 export const updateProfile = async(req,res) =>{
     try {
         const {profilePic}=req.body;
