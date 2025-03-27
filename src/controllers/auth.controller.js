@@ -23,7 +23,7 @@ export const signup = async(req, res) => {
         
         
         //create new User
-        const hashedPassword=await bcrypt.hash(password,10);
+        const hashedPassword=await bcrypt.hash(password,10); //salt 10 for more security
         const newUser=new User({
             fullName,
             email,
@@ -58,7 +58,14 @@ export const login = async(req, res) => {
             return res.status(400).json({message:"Invalid credentials"});
         }
         generateToken(user._id,res);
-        res.status(200).json({message:"Login successful"});
+        res.status(200).json({user:{
+            _id:user._id,
+            fullName:user.fullName,
+            email:user.email,
+            profilePic:user.profilePic,
+            createdAt:user.createdAt,}
+        })
+        
     
     } catch (error) {
         console.log(error.message);
@@ -70,6 +77,7 @@ export const logout = (req, res) => {
     try {
         res.cookie("jwt","",{maxAge:0});
         res.status(200).json({message:"Log out successful"});
+        res
     }
     catch (error) {
         console.log(error.message);
@@ -81,13 +89,17 @@ export const logout = (req, res) => {
 export const updateProfile = async(req,res) =>{
     try {
         const {profilePic}=req.body;
-        const user=req.user._id;
+        const userId=req.user._id;
     if (!profilePic) {
         return res.status(400).json({message:"Profile pic is required"});
     }
     
-    await cloudinary.uploader.upload(profilePic);
-    const updatedUser=await User.findByIdAndUpdate(userId,{profilePic:uploadResponse.secure_url},{new:true});
+    
+    const uploadResponse =await cloudinary.uploader.upload(profilePic);
+    const updatedUser=await User.findByIdAndUpdate(userId,
+        {profilePic:uploadResponse.secure_url},
+        {new:true}
+    );
     res.status(200).json(updatedUser);
 }
     catch (error) {
