@@ -33,11 +33,11 @@ export const signup = async(req, res) => {
             generateToken(newUser._id,res);
             await newUser.save();
             res.status(201).json({
-                _id:user._id,
-                fullName:user.fullName,
-                email:user.email,
-                profilePic:user.profilePic,
-                createdAt:user.createdAt
+                _id:newUser._id,
+                fullName:newUser.fullName,
+                email:newUser.email,
+                profilePic:newUser.profilePic,
+                createdAt:newUser.createdAt
         });
         }
         else {
@@ -46,7 +46,7 @@ export const signup = async(req, res) => {
 }
 
     catch (error) {
-        console.log(error.message);
+        console.log("error in signup",error);
         return res.status(500).json({message:"Internal server error"});
 
     }
