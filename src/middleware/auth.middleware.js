@@ -7,14 +7,15 @@ dotenv.config();
 export const protectRoute = async (req, res, next) => {
     try {
         const token =req.cookies.jwt;
+        const sessionToken=req.cookies.sessionId;
 
-        if (!token) {
+        if (!token || !sessionToken) {
             return res.status(401).json({message:"Unauthorized"});
         }
         const decoded = jwt.verify(token,process.env.jwt_secret);
 
-        if (!decoded) {
-            return res.status(401).json({message:"Unauthorized"});
+        if (!decoded || decoded.sessionToken!==sessionToken) {
+            return res.status(401).json({message:"Unauthorized session"});
         }
         const user = await User.findById(decoded.userId).select('-password');
         if (!user) {
