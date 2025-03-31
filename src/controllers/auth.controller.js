@@ -115,6 +115,38 @@ export const updateProfile = async(req,res) =>{
         res.status(500).json({message:"Internal server error"});
     }
 }
+export const addContact = async (req, res) => {
+    try {
+        const { email } = req.body; 
+        const userId = req.user._id;
+
+        // find the user with the email
+        const contactUser = await User.findOne({ email });
+        if (!contactUser) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        // restricting self add
+        if (contactUser._id.equals(userId)) {
+            return res.status(400).json({ message: "You cannot add yourself as a contact" });
+        }
+
+        //already in my contact list
+        const user = await User.findById(userId);
+        if (user.contacts.includes(contactUser._id)) {
+            return res.status(400).json({ message: "User is already in your contacts" });
+        }
+
+        //adding to my contact list
+        user.contacts.push(contactUser._id);
+        await user.save();
+
+        res.status(200).json({ message: "Contact added successfully", contact: contactUser._id });
+    } catch (error) {
+        console.error("Error adding contact:", error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+};
 
 export const checkAuth = (req,res) =>{
     try {
@@ -124,3 +156,4 @@ export const checkAuth = (req,res) =>{
         res.status(500).json({message:"Internal server error"});
     }
 }
+

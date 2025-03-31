@@ -3,17 +3,18 @@ import { getReceiverSocketId, io } from "../lib/socket.js";
 import Message from "../models/message.model.js";
 import User from "../models/user.model.js";
 
-export const getUserListForSidebar = async (req, res) => {
+export const getContactListForSidebar = async (req, res) => {
     try {
         const myUserId = req.user._id;
         if (!myUserId) {
             return res.status(400).json({ message: "User not found" });}
-        
-        const users = await User.find({ _id: { $ne: myUserId } }).select('-password');
-        if (!users) {
-            return res.status(400).json({ message: "No users found" });
+        const myContacts=await User.findById(myUserId).select('contacts');
+        if (!myContacts) {
+            return res.status(400).json({ message: "No contacts found" });
         }
-        res.status(200).json(users);
+        const myContactIds = await User.find({ _id: { $in: myContacts.contacts } }).select('-password');
+        
+        res.status(200).json(myContactIds);
     } catch (error) {
         console.log("errornin getUserListForSidebar",error.message);
         return res.status(500).json({ message: "Internal server error" });
