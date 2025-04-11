@@ -1,5 +1,6 @@
 import {Server} from 'socket.io';
-import {createServer} from 'http';
+import {createServer as httpsServer} from 'https';
+import {createServer as httpServer} from 'http';
 import express from 'express';
 import path from 'path';
 import fs from 'fs';
@@ -13,10 +14,10 @@ if (process.env.node_env === 'production'){
         key: fs.readFileSync(path.resolve(import.meta.dirname,'key.pem')),  // Or 'server.key'
         cert: fs.readFileSync(path.resolve(import.meta.dirname,'cert.pem')) // Or 'server.cert'
     };
-     server =createServer(sslOptions,app);
+     server =httpsServer(sslOptions,app);
     
 } else {
-     server =createServer(app);
+     server =httpServer(app);
 
     
 }
