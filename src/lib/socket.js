@@ -1,13 +1,29 @@
 import {Server} from 'socket.io';
 import {createServer} from 'http';
 import express from 'express';
+import path from 'path';
+import fs from 'fs';
+import dotenv from 'dotenv';
 
+dotenv.config();
 const app = express();
-const server =createServer(app);
+let server;
+if (process.env.node_env === 'production'){
+    const sslOptions = {
+        key: fs.readFileSync(path.resolve(import.meta.dirname,'key.pem')),  // Or 'server.key'
+        cert: fs.readFileSync(path.resolve(import.meta.dirname,'cert.pem')) // Or 'server.cert'
+    };
+     server =createServer(sslOptions,app);
+    
+} else {
+     server =createServer(app);
+
+    
+}
 
 const io =new Server(server,{
     cors:{
-        origin:["http://localhost:5173"]
+        origin:process.env.node_env ==="production" ? process.env.client_url : "http://localhost:5173",
     },
     })
 export function getReceiverSocketId(userId){

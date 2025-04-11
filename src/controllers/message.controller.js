@@ -12,6 +12,7 @@ export const getContactListForSidebar = async (req, res) => {
         if (!myContacts) {
             return res.status(400).json({ message: "No contacts found" });
         }
+        //actually mycontactdetails 
         const myContactIds = await User.find({ _id: { $in: myContacts.contacts } }).select('-password');
         
         res.status(200).json(myContactIds);

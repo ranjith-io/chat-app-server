@@ -8,22 +8,22 @@ export const generateToken= (userId,res)=>
 
 
     })
+    console.log("sessionToken",sessionToken);
     
-    // console.log(token);
-    // console.log(process.env.jwt_secret);
+   
    res.cookie('jwt',token,{
     
     maxAge:24*60*60*1000,
     httpOnly:true,
-    secure:process.env.node_env!=='production'?true:false,
-    sameSite:'strict',
+    secure:true,
+    sameSite:'none',
     });
     res.cookie('sessionId',sessionToken,{
     
         maxAge:24*60*60*1000,
         httpOnly:true,
-        secure:process.env.node_env!=='production'?true:false,
-        sameSite:'strict',
+        secure:true,
+        sameSite:'none',
         });
    
 }
