@@ -9,6 +9,7 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    environment: CHAT_APP
 
     steps:
       - name: Checkout code
@@ -24,6 +25,7 @@ jobs:
       - name: Deploy to EC2
         run: |
           ssh -i ~/.ssh/id_rsa ${{ secrets.CHAT_APP_USER }}@${{ secrets.CHAT_APP_HOST }} << 'EOF'
+            source ~/.nvm/nvm.sh
             cd chat-app-server
             git pull origin master
             npm install
